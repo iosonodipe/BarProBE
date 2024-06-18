@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder(setterPrefix = "with")
 public class Quotation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne

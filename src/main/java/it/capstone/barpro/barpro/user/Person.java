@@ -4,6 +4,8 @@ import lombok.Data;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @MappedSuperclass
 @Data
 public abstract class Person {
@@ -17,9 +19,6 @@ public abstract class Person {
     @Column(nullable = false, length = 40)
     private String lastName;
 
-    @Column(nullable = false)
-    private String gender;
-
     @Column
     private String profileImage;
 
@@ -29,11 +28,11 @@ public abstract class Person {
     @Column(nullable = false, length = 50)
     private String password;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 13)
     private String phoneNumber;
 
     @Column(nullable = false)
-    private Integer age;
+    private LocalDate birthDate;
 
     @Column
     private String address;
