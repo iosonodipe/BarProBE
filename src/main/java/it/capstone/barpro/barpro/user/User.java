@@ -1,5 +1,6 @@
 package it.capstone.barpro.barpro.user;
 
+import it.capstone.barpro.barpro.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,8 +8,6 @@ import lombok.*;
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder(setterPrefix = "with")
 public class User extends Person{
 

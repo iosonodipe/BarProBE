@@ -1,5 +1,6 @@
 package it.capstone.barpro.barpro.barman;
 
+import it.capstone.barpro.barpro.role.Role;
 import it.capstone.barpro.barpro.user.Person;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,8 +10,6 @@ import lombok.*;
 @Entity
 @Table(name = "barmen")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder(setterPrefix = "with")
 public class Barman extends Person {
     @Column(nullable = false)
@@ -21,4 +20,5 @@ public class Barman extends Person {
 
     @Column
     private Integer rating;
+
 }

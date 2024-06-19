@@ -1,6 +1,5 @@
-package it.capstone.barpro.barpro.quotation;
+package it.capstone.barpro.barpro.booking;
 
-import it.capstone.barpro.barpro.user.User;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,12 +13,16 @@ public class Request {
     @NotNull
     private Long idUser;
 
+    @NotNull
+    private Long idBarman;
+
+    @NotNull
+    private LocalDateTime date;
+
     @NotEmpty
     private String eventDetails;
 
     @NotEmpty
     private String city;
 
-    @NotNull
-    private LocalDateTime requestDate;
 }

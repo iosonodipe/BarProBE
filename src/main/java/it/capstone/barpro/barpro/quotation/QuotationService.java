@@ -6,6 +6,10 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,12 +25,14 @@ public class QuotationService {
     @Autowired
     UserRepo userRepo;
 
-    public List<QuotationResponseProj> findAll(){
-        return repo.findAllBy();
+    public Page<QuotationResponseProj> findAll(int page, int size, String sortBy){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return repo.findAllBy(pageable);
     }
 
-    public List<QuotationResponseProj> findAllByCity(String city){
-        return repo.findAllByCity(city);
+    public Page<QuotationResponseProj> findAllByCity(int page, int size, String city){
+        Pageable pageable = PageRequest.of(page, size, Sort.unsorted());
+        return repo.findAllByCity(pageable, city);
     }
 
     public Response findById(Long id){
@@ -42,10 +48,17 @@ public class QuotationService {
     public Response create(@Valid Request request){
         Quotation quotation = new Quotation();
         BeanUtils.copyProperties(request, quotation);
+        quotation.setStatus(Status.OPEN);
         quotation.setUser(userRepo.findById(request.getIdUser()).get());
+        repo.save(quotation);
+
         Response response = new Response();
         BeanUtils.copyProperties(quotation, response);
-        repo.save(quotation);
+
+        it.capstone.barpro.barpro.user.Response user = new it.capstone.barpro.barpro.user.Response();
+        BeanUtils.copyProperties(quotation.getUser(), user);
+        response.setUser(user);
+
         return response;
     }
 
@@ -65,9 +78,15 @@ public class QuotationService {
         }
         Quotation quotation = repo.findById(id).get();
         BeanUtils.copyProperties(request, quotation);
+        repo.save(quotation);
+
         Response response = new Response();
         BeanUtils.copyProperties(quotation, response);
-        repo.save(quotation);
+
+        it.capstone.barpro.barpro.user.Response user = new it.capstone.barpro.barpro.user.Response();
+        BeanUtils.copyProperties(quotation.getUser(), user);
+        response.setUser(user);
+
         return response;
     }
 }

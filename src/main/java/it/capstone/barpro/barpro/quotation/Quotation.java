@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @Table(name = "requests")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder(setterPrefix = "with")
 public class Quotation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

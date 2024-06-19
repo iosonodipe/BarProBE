@@ -1,8 +1,10 @@
 package it.capstone.barpro.barpro.user;
 
+import it.capstone.barpro.barpro.role.Role;
 import lombok.Data;
 
 import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -14,10 +16,10 @@ public abstract class Person {
     private Long id;
 
     @Column(nullable = false, length = 40)
-    private String firstName;
+    private String name;
 
     @Column(nullable = false, length = 40)
-    private String lastName;
+    private String surname;
 
     @Column
     private String profileImage;
@@ -34,15 +36,13 @@ public abstract class Person {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column
-    private String address;
-
     @Column(nullable = false)
     private String city;
 
     @Column(nullable = false)
     private String postalCode;
 
-    @Column(nullable = false)
-    private String role; // ADMIN, BARMAN, USER
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role; // ADMIN, BARMAN, USER
 }

@@ -2,12 +2,14 @@ package it.capstone.barpro.barpro.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class Response {
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String name;
+    private String surname;
     private String email;
 }
