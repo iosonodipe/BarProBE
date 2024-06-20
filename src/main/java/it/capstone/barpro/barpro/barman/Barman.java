@@ -10,7 +10,7 @@ import lombok.*;
 @Entity
 @Table(name = "barmen")
 @Data
-@Builder(setterPrefix = "with")
+@NoArgsConstructor
 public class Barman extends Person {
     @Column(nullable = false)
     private Integer experienceYears;

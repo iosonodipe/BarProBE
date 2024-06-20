@@ -8,7 +8,6 @@ import lombok.*;
 @Entity
 @Table(name = "users")
 @Data
-@Builder(setterPrefix = "with")
 public class User extends Person{
 
 }

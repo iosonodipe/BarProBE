@@ -1,6 +1,5 @@
-package it.capstone.barpro.barpro.user;
+package it.capstone.barpro.barpro.barman;
 
-import it.capstone.barpro.barpro.role.Role;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,4 +31,11 @@ public class Request {
     @NotBlank(message = "Il CAP deve essere specificato.")
     @Size(min = 5, max = 5, message = "Il CAP deve essere di 5 cifre.")
     private String postalCode;
+    @NotEmpty(message = "La descrizione non può essere vuota.")
+    @Size(max = 300, message = "La descrizione può essere di max 300 caratteri")
+    private String description;
+    @NotNull(message = "Gli anni di esperienza non possono essere vuoti.")
+    @Min(value = 1, message = "Gli anni di esperienza devono essere pari o superiori a 1.")
+    private Integer experienceYears;
+    private Integer rating = 0;
 }
