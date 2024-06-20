@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    public Page<Response> findAllBy(Pageable pageable);
+    public Page<UserResponseProj> findAllBy(Pageable pageable);
+    public User findByRoleId(Long id);
 }

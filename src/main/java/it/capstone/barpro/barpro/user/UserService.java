@@ -22,7 +22,7 @@ public class UserService {
     @Autowired
     private RoleRepo roleRepo;
 
-    public Page<Response> findAll(int page, int size){
+    public Page<UserResponseProj> findAll(int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.unsorted());
         return repo.findAllBy(pageable);
     }
@@ -40,6 +40,7 @@ public class UserService {
     public Response create(@Valid Request request){
         User user = new User();
         BeanUtils.copyProperties(request, user);
+        user.setRole(roleRepo.findById(1L).get());
         repo.save(user);
 
         Response response = new Response();
