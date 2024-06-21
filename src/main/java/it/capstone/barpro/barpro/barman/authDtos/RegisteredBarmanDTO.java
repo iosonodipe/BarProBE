@@ -1,4 +1,4 @@
-package it.capstone.barpro.barpro.user.authDtos;
+package it.capstone.barpro.barpro.barman.authDtos;
 
 import it.capstone.barpro.barpro.roles.Roles;
 import lombok.Builder;
@@ -9,23 +9,29 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class RegisteredUserDTO {
+public class RegisteredBarmanDTO {
     Long id;
     String firstName;
     String lastName;
     String username;
     String email;
     String city;
+    String description;
+    Integer experienceYears;
+    Integer rating;
     private List<Roles> roles;
 
     @Builder(setterPrefix = "with")
-    public RegisteredUserDTO(Long id, String firstName, String lastName, String username, String email, String city, List<Roles> roles) {
+    public RegisteredBarmanDTO(Long id, String firstName, String lastName, String username, String email, String city, String description, Integer experienceYears, Integer rating, List<Roles> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.city = city;
+        this.description = description;
+        this.experienceYears = experienceYears;
+        this.rating = rating;
         this.roles = roles;
     }
 }

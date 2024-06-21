@@ -59,6 +59,7 @@ public class ApplicationSecurityConfig {
                 .authorizeHttpRequests(authorize ->
                                 authorize //CONFIGURAZIONE DELLA PROTEZIONE DEI VARI ENDPOINT
                                         .requestMatchers("/api/users/login").permitAll()
+                                        .requestMatchers("/api/barmen").permitAll()
                                         .requestMatchers("/api/users/registerAdmin").permitAll() // DA CANCELLARE DOPO AVER CREATO L'ADMIN
                                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll() //ENDPOINT DI REGISTRAZIONE APERTO A TUTTI
                                         .requestMatchers(HttpMethod.GET, "/**").authenticated() //TUTTE GLI ENDPOINTS DI TIPO GET SONO RICHIAMABILI SOLO SE L'UTENTE E AUTENTICATO

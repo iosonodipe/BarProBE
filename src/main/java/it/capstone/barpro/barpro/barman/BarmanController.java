@@ -1,9 +1,16 @@
 package it.capstone.barpro.barpro.barman;
 
+import it.capstone.barpro.barpro.barman.authDtos.RegisterBarmanDTO;
+import it.capstone.barpro.barpro.barman.authDtos.RegisterBarmanModel;
+import it.capstone.barpro.barpro.barman.authDtos.RegisteredBarmanDTO;
+import it.capstone.barpro.barpro.errors.ApiValidationException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,7 +21,7 @@ public class BarmanController {
     private BarmanService svc;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> findById(@PathVariable Long id) {
+    public ResponseEntity<RegisteredBarmanDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(svc.findById(id));
     }
 
@@ -32,8 +39,31 @@ public class BarmanController {
         return ResponseEntity.ok(svc.findAllByCity(page, size, city));
     }
 
+    @PostMapping
+    public ResponseEntity<RegisteredBarmanDTO> registerBarman(@RequestBody @Validated RegisterBarmanModel model, BindingResult validator) {
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+
+        var registeredBarman = svc.registerBarman(
+                RegisterBarmanDTO.builder()
+                        .withFirstName(model.firstName())
+                        .withLastName(model.lastName())
+                        .withUsername(model.username())
+                        .withEmail(model.email())
+                        .withPassword(model.password())
+                        .withCity(model.city())
+                        .withAvatar(model.avatar())
+                        .withExperienceYears(model.experienceYears())
+                        .withDescription(model.description())
+                        .withRating(0)
+                        .build());
+
+        return new ResponseEntity<>(registeredBarman, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody @Valid Request request) {
+    public ResponseEntity<RegisteredBarmanDTO> update(@PathVariable Long id, @RequestBody @Valid RegisterBarmanModel request) {
         return ResponseEntity.ok(svc.update(id, request));
     }
 

@@ -1,14 +1,13 @@
 package it.capstone.barpro.barpro.user;
 
+import it.capstone.barpro.barpro.barman.BarmanRepo;
+import it.capstone.barpro.barpro.barman.authDtos.RegisteredBarmanDTO;
 import it.capstone.barpro.barpro.email.EmailService;
 import it.capstone.barpro.barpro.errors.InvalidLoginException;
 import it.capstone.barpro.barpro.roles.Roles;
 import it.capstone.barpro.barpro.roles.RolesRepository;
 import it.capstone.barpro.barpro.security.JwtUtils;
-import it.capstone.barpro.barpro.user.authDtos.LoginResponseDTO;
-import it.capstone.barpro.barpro.user.authDtos.RegisterUserDTO;
-import it.capstone.barpro.barpro.user.authDtos.RegisterUserModel;
-import it.capstone.barpro.barpro.user.authDtos.RegisteredUserDTO;
+import it.capstone.barpro.barpro.user.authDtos.*;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -39,6 +38,7 @@ import java.util.Optional;
 public class UserService {
     private final PasswordEncoder encoder;
     private final UserRepository usersRepository;
+    private final BarmanRepo barmanRepository;
     private final RolesRepository rolesRepository;
     private final AuthenticationManager auth;
     private final JwtUtils jwt;
@@ -60,7 +60,7 @@ public class UserService {
         return RegisteredUserDTO;
     }
 
-    public Optional<LoginResponseDTO> login(String username, String password) {
+    public Optional<LoginResponseWrapper> login(String username, String password) {
         try {
             //SI EFFETTUA IL LOGIN
             //SI CREA UNA AUTENTICAZIONE OVVERO L'OGGETTO DI TIPO AUTHENTICATION
@@ -72,21 +72,42 @@ public class UserService {
             SecurityContextHolder.getContext().setAuthentication(a);
 
             var user = usersRepository.findOneByUsername(username).orElseThrow();
-            var dto = LoginResponseDTO.builder()
-                    .withUser(RegisteredUserDTO.builder()
-                            .withId(user.getId())
-                            .withFirstName(user.getFirstName())
-                            .withLastName(user.getLastName())
-                            .withEmail(user.getEmail())
-                            .withRoles(user.getRoles())
-                            .withUsername(user.getUsername())
-                            .build())
-                    .build();
+            if (user.getRoles().contains(new Roles(Roles.ROLES_USER)) || user.getRoles().contains(new Roles(Roles.ROLES_ADMIN))){
+                var dto = LoginResponseDTO.builder()
+                        .withUser(RegisteredUserDTO.builder()
+                                .withId(user.getId())
+                                .withFirstName(user.getFirstName())
+                                .withLastName(user.getLastName())
+                                .withEmail(user.getEmail())
+                                .withRoles(user.getRoles())
+                                .withUsername(user.getUsername())
+                                .withCity(user.getCity())
+                                .build())
+                        .build();
+                dto.setToken(jwt.generateToken(a));
+                return Optional.of(new LoginResponseWrapper(dto));
+            } else if (user.getRoles().contains(new Roles(Roles.ROLES_BARMAN))){
+                var barman = barmanRepository.findById(user.getId()).get();
+                var dto = it.capstone.barpro.barpro.barman.authDtos.LoginResponseDTO.builder()
+                        .withBarman(RegisteredBarmanDTO.builder()
+                                .withId(user.getId())
+                                .withFirstName(user.getFirstName())
+                                .withLastName(user.getLastName())
+                                .withEmail(user.getEmail())
+                                .withCity(user.getCity())
+                                .withRoles(user.getRoles())
+                                .withUsername(user.getUsername())
+                                .withRating(barman.getRating())
+                                .withExperienceYears(barman.getExperienceYears())
+                                .withDescription(barman.getDescription())
+                                .build())
+                        .build();
+                dto.setToken(jwt.generateToken(a));
+                return Optional.of(new LoginResponseWrapper(dto));
+            }
 
             //UTILIZZO DI JWTUTILS PER GENERARE IL TOKEN UTILIZZANDO UNA AUTHENTICATION E LO ASSEGNA ALLA LOGINRESPONSEDTO
-            dto.setToken(jwt.generateToken(a));
 
-            return Optional.of(dto);
         } catch (NoSuchElementException e) {
             //ECCEZIONE LANCIATA SE LO USERNAME E SBAGLIATO E QUINDI L'UTENTE NON VIENE TROVATO
             log.error("User not found", e);
@@ -96,6 +117,7 @@ public class UserService {
             log.error("Authentication failed", e);
             throw new InvalidLoginException(username, password);
         }
+        return Optional.empty();
     }
 
     public RegisteredUserDTO register(RegisterUserDTO register){
@@ -136,32 +158,6 @@ public class UserService {
         BeanUtils.copyProperties(u, response);
         response.setRoles(List.of(roles));
         return response;
-    }
-
-    @Transactional
-    public RegisteredUserDTO create(@Valid RegisterUserModel RegisterUserModel){
-        User user = new User();
-        BeanUtils.copyProperties(RegisterUserModel, user);
-//        user.setRole(roleusersRepository.findById(1L).get());
-        usersRepository.save(user);
-
-        RegisteredUserDTO RegisteredUserDTO = new RegisteredUserDTO();
-        BeanUtils.copyProperties(user, RegisteredUserDTO);
-
-        return RegisteredUserDTO;
-    }
-
-    @Transactional
-    public RegisteredUserDTO create(@Valid RegisterUserModel RegisterUserModel, boolean isAdmin){
-        User user = new User();
-        BeanUtils.copyProperties(RegisterUserModel, user);
-//        if (isAdmin) user.setRole(roleusersRepository.findById(0L).get());
-        usersRepository.save(user);
-
-        RegisteredUserDTO RegisteredUserDTO = new RegisteredUserDTO();
-        BeanUtils.copyProperties(user, RegisteredUserDTO);
-
-        return RegisteredUserDTO;
     }
 
     @Transactional
