@@ -1,9 +1,14 @@
 package it.capstone.barpro.barpro.user;
 
+import it.capstone.barpro.barpro.errors.ApiValidationException;
+import it.capstone.barpro.barpro.user.authDtos.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,8 +18,40 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Validated LoginModel model, BindingResult validator) {
+        if (validator.hasErrors()) {
+            throw  new ApiValidationException(validator.getAllErrors());
+        }
+        return new ResponseEntity<>(userService.login(model.username(), model.password()).orElseThrow(), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<RegisteredUserDTO> register(@RequestBody @Validated RegisterUserModel model, BindingResult validator){
+        if (validator.hasErrors()) {
+            throw new ApiValidationException(validator.getAllErrors());
+        }
+        var registeredUser = userService.register(
+                RegisterUserDTO.builder()
+                        .withFirstName(model.firstName())
+                        .withLastName(model.lastName())
+                        .withUsername(model.username())
+                        .withEmail(model.email())
+                        .withPassword(model.password())
+                        .withAvatar(model.avatar())
+                        .withCity(model.city())
+                        .build());
+
+        return  new ResponseEntity<> (registeredUser, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/registerAdmin")
+    public ResponseEntity<RegisteredUserDTO> registerAdmin(@RequestBody RegisterUserDTO registerUser){
+        return ResponseEntity.ok(userService.registerAdmin(registerUser));
+    }
     @GetMapping("/{id}")
-    public ResponseEntity<Response> findById(@PathVariable Long id) {
+    public ResponseEntity<RegisteredUserDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
@@ -24,18 +61,8 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll(page, size));
     }
 
-    @PostMapping
-    public ResponseEntity<Response> create(@RequestBody @Valid Request request) {
-        return ResponseEntity.ok(userService.create(request));
-    }
-
-    @PostMapping("/admin")
-    public ResponseEntity<Response> createAdmin(@RequestBody @Valid Request request) {
-        return ResponseEntity.ok(userService.create(request, true));
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody @Valid Request request) {
+    public ResponseEntity<RegisteredUserDTO> update(@PathVariable Long id, @RequestBody @Valid RegisterUserModel request) {
         return ResponseEntity.ok(userService.update(id, request));
     }
 

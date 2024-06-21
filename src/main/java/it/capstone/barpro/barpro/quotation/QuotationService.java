@@ -1,6 +1,7 @@
 package it.capstone.barpro.barpro.quotation;
 
-import it.capstone.barpro.barpro.user.UserRepo;
+import it.capstone.barpro.barpro.user.UserRepository;
+import it.capstone.barpro.barpro.user.authDtos.RegisteredUserDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -13,8 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-
 @Service
 @Validated
 public class QuotationService {
@@ -23,7 +22,7 @@ public class QuotationService {
     QuotationRepo repo;
 
     @Autowired
-    UserRepo userRepo;
+    UserRepository userRepository;
 
     public Page<QuotationResponseProj> findAll(int page, int size, String sortBy){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -49,13 +48,13 @@ public class QuotationService {
         Quotation quotation = new Quotation();
         BeanUtils.copyProperties(request, quotation);
         quotation.setStatus(Status.OPEN);
-        quotation.setUser(userRepo.findById(request.getIdUser()).get());
+        quotation.setUser(userRepository.findById(request.getIdUser()).get());
         repo.save(quotation);
 
         Response response = new Response();
         BeanUtils.copyProperties(quotation, response);
 
-        it.capstone.barpro.barpro.user.Response user = new it.capstone.barpro.barpro.user.Response();
+        RegisteredUserDTO user = new RegisteredUserDTO();
         BeanUtils.copyProperties(quotation.getUser(), user);
         response.setUser(user);
 
@@ -83,7 +82,7 @@ public class QuotationService {
         Response response = new Response();
         BeanUtils.copyProperties(quotation, response);
 
-        it.capstone.barpro.barpro.user.Response user = new it.capstone.barpro.barpro.user.Response();
+        RegisteredUserDTO user = new RegisteredUserDTO();
         BeanUtils.copyProperties(quotation.getUser(), user);
         response.setUser(user);
 

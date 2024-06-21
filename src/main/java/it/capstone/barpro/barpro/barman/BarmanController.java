@@ -32,11 +32,6 @@ public class BarmanController {
         return ResponseEntity.ok(svc.findAllByCity(page, size, city));
     }
 
-    @PostMapping
-    public ResponseEntity<Response> create(@RequestBody @Valid Request request) {
-        return ResponseEntity.ok(svc.create(request));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody @Valid Request request) {
         return ResponseEntity.ok(svc.update(id, request));

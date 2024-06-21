@@ -1,6 +1,5 @@
 package it.capstone.barpro.barpro.barman;
 
-import it.capstone.barpro.barpro.role.RoleRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,9 +19,6 @@ public class BarmanService {
     @Autowired
     private BarmanRepo repo;
 
-    @Autowired
-    private RoleRepo roleRepo;
-
     public Page<BarmanResponseProj> findAll(int page, int size, String sortBy){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return repo.findAllBy(pageable);
@@ -40,19 +36,6 @@ public class BarmanService {
         Barman barman = repo.findById(id).get();
         Response response = new Response();
         BeanUtils.copyProperties(barman, response);
-        return response;
-    }
-
-    @Transactional
-    public Response create(@Valid Request request) {
-        Barman barman = new Barman();
-        BeanUtils.copyProperties(request, barman);
-        barman.setRole(roleRepo.findById(2L).get());
-        repo.save(barman);
-
-        Response response = new Response();
-        BeanUtils.copyProperties(barman, response);
-
         return response;
     }
 
