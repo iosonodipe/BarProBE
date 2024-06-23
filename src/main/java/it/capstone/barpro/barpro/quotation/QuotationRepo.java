@@ -12,5 +12,7 @@ public interface QuotationRepo extends JpaRepository<Quotation, Long>{
 
     public Page<QuotationResponseProj> findAllBy(Pageable pageable);
     public Page<QuotationResponseProj> findAllByCity(Pageable pageable, String city);
+    public List<Quotation> findAllByUserId(Long id);
+    boolean existsByUserId(Long id);
 
 }

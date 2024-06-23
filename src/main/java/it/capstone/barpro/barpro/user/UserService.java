@@ -176,6 +176,7 @@ public class UserService {
         }
         User user = usersRepository.findById(id).get();
         BeanUtils.copyProperties(RegisterUserModel, user);
+        user.setPassword(encoder.encode(RegisterUserModel.password()));
         usersRepository.save(user);
 
         RegisteredUserDTO RegisteredUserDTO = new RegisteredUserDTO();

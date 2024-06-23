@@ -27,7 +27,6 @@ public record RegisterBarmanModel(
         @NotNull(message = "Devi inserire gli anni di esperienza")
         Integer experienceYears,
         @NotBlank(message = "La descrizione non può essere vuota.")
-        String description,
-        Integer rating
+        String description
 ) {
 }
