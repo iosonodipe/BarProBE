@@ -1,8 +1,11 @@
 package it.capstone.barpro.barpro.user;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import it.capstone.barpro.barpro.barman.BarmanRepo;
 import it.capstone.barpro.barpro.barman.authDtos.RegisteredBarmanDTO;
 import it.capstone.barpro.barpro.email.EmailService;
+import it.capstone.barpro.barpro.errors.FileSizeExceededException;
 import it.capstone.barpro.barpro.errors.InvalidLoginException;
 import it.capstone.barpro.barpro.roles.Roles;
 import it.capstone.barpro.barpro.roles.RolesRepository;
@@ -15,6 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +30,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -43,7 +50,9 @@ public class UserService {
     private final AuthenticationManager auth;
     private final JwtUtils jwt;
     private final EmailService emailService; // per gestire invio email di benvenuto
-//    private final Cloudinary cloudinary; // gestisce cloudinary
+    private final Cloudinary cloudinary; // gestisce cloudinary
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
 
     public Page<UserResponseProj> findAll(int page, int size){
         Pageable pageable = PageRequest.of(page, size, Sort.unsorted());
@@ -183,5 +192,78 @@ public class UserService {
         BeanUtils.copyProperties(user, RegisteredUserDTO);
 
         return RegisteredUserDTO;
+    }
+
+    @Transactional
+    public String uploadAvatar(Long id, MultipartFile image) throws IOException {
+        long maxFileSize = getMaxFileSizeInBytes();
+        if (image.getSize() > maxFileSize) {
+            throw new FileSizeExceededException("File size exceeds the maximum allowed size");
+        }
+
+        Optional<User> optionalUser = usersRepository.findById(id);
+        User user = optionalUser.orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        String existingPublicId = user.getAvatar();
+        if (existingPublicId != null && !existingPublicId.isEmpty()) {
+            cloudinary.uploader().destroy(existingPublicId, ObjectUtils.emptyMap());
+        }
+
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
+        String publicId = (String) uploadResult.get("public_id");
+        String url = (String) uploadResult.get("url");
+
+        user.setAvatar(publicId);
+        usersRepository.save(user);
+
+        return url;
+    }
+
+    // PUT update cloudinary file
+    @Transactional
+    public String updateAvatar(Long id, MultipartFile updatedImage) throws IOException {
+        // Recupera l'utente dal database
+        User user = usersRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // Elimina l'avatar esistente (se presente)
+        deleteAvatar(user.getAvatar());
+
+        // Carica la nuova immagine su Cloudinary
+        var uploadResult = cloudinary.uploader().upload(updatedImage.getBytes(),
+                com.cloudinary.utils.ObjectUtils.asMap("public_id", user.getUsername() + "_avatar"));
+
+        // Recupera l'URL dell'immagine
+        String url = uploadResult.get("url").toString();
+
+        // Aggiorna l'utente con l'URL dell'avatar
+        user.setAvatar(url);
+        usersRepository.save(user);
+
+        return url;
+    }
+
+    private void deleteAvatar(String url) throws IOException {
+        if (url != null && !url.isEmpty()) {
+            String publicId = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
+            cloudinary.uploader().destroy(publicId, com.cloudinary.utils.ObjectUtils.emptyMap());
+        }
+    }
+
+    public long getMaxFileSizeInBytes() {
+        String[] parts = maxFileSize.split("(?i)(?<=[0-9])(?=[a-z])");
+        long size = Long.parseLong(parts[0]);
+        String unit = parts[1].toUpperCase();
+        switch (unit) {
+            case "KB":
+                size *= 1024;
+                break;
+            case "MB":
+                size *= 1024 * 1024;
+                break;
+            case "GB":
+                size *= 1024 * 1024 * 1024;
+                break;
+        }
+        return size;
     }
 }

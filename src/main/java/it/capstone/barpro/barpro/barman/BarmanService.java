@@ -7,6 +7,7 @@ import it.capstone.barpro.barpro.email.EmailService;
 import it.capstone.barpro.barpro.roles.Roles;
 import it.capstone.barpro.barpro.roles.RolesRepository;
 import it.capstone.barpro.barpro.user.UserRepository;
+import it.capstone.barpro.barpro.user.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -21,7 +22,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -34,6 +37,7 @@ public class BarmanService {
     private final BarmanRepo repo;
     private final RolesRepository rolesRepository;
     private final UserRepository usersRepository;
+    private final UserService usersService;
     private final EmailService emailService; // per gestire invio email di benvenuto
 
 
@@ -105,5 +109,15 @@ public class BarmanService {
         BeanUtils.copyProperties(barman, response);
 
         return response;
+    }
+
+    @Transactional
+    public String uploadAvatar(Long id, MultipartFile image) throws IOException {
+        return usersService.uploadAvatar(id, image);
+    }
+
+    @Transactional
+    public String updateAvatar(Long id, MultipartFile updatedImage) throws IOException {
+        return usersService.updateAvatar(id, updatedImage);
     }
 }
