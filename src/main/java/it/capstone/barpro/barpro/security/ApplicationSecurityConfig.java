@@ -67,6 +67,7 @@ public class ApplicationSecurityConfig {
                                         .requestMatchers(HttpMethod.DELETE, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
                                         .requestMatchers(HttpMethod.GET, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
                                         .requestMatchers(HttpMethod.PUT, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
+                                        .requestMatchers(HttpMethod.PATCH, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
                         //.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)
                 )
                 .httpBasic(Customizer.withDefaults())

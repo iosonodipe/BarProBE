@@ -1,5 +1,7 @@
 package it.capstone.barpro.barpro.errors;
 
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -26,4 +28,36 @@ public class ErrorHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFound(EntityNotFoundException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<String> handleEntityExists(EntityExistsException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidLoginException.class)
+    public ResponseEntity<String> handleInvalidLogin(InvalidLoginException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DateAlreadyBookedException.class)
+    public ResponseEntity<String> handleDateAlreadyBooked(DateAlreadyBookedException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.UNAUTHORIZED);
+    }
+
+
 }
