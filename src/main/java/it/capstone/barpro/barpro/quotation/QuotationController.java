@@ -27,6 +27,17 @@ public class QuotationController {
     @PostMapping
     public ResponseEntity<Response> create(@RequestBody Request request) { return ResponseEntity.ok(svc.create(request)); }
 
+    @PostMapping("/{id}/respond")
+    public ResponseEntity<Void> respondToQuotation(@PathVariable Long id, @RequestParam Long barmanId, @RequestParam Double priceDetails) {
+        svc.respondToQuotation(id, barmanId, priceDetails);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<String> acceptQuotation(@PathVariable Long id, @RequestParam Long idBarman) {
+        return ResponseEntity.ok(svc.acceptQuotation(id, idBarman));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Response> update(@PathVariable Long id, @RequestBody Request request) { return ResponseEntity.ok(svc.update(id, request)); }
 
