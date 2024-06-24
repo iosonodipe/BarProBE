@@ -39,7 +39,8 @@ public class BookingService {
         if (!barmanRepository.existsById(request.getIdBarman())) {
             throw new IllegalArgumentException("ID barman non esistente");
         }
-        if (isAlreadyBooked(request.getIdUser(), request.getDate())) throw new DateAlreadyBookedException();
+        if (isUserAlreadyBooked(request.getIdUser(), request.getDate())) throw new DateAlreadyBookedException();
+        if (isBarmanAlreadyBooked(request.getIdBarman(), request.getDate())) throw new DateAlreadyBookedException("Il barman richiesto ha già una prenotazione confermata per il giorno selezionato.");
 
         Booking booking = new Booking();
         BeanUtils.copyProperties(request, booking);
@@ -69,6 +70,8 @@ public class BookingService {
             throw new EntityNotFoundException("Prenotazione non trovata");
         }
         Booking booking = bookingRepository.findById(id).get();
+        if (isUserAlreadyBooked(booking.getUser().getId(), booking.getDate())) throw new DateAlreadyBookedException();
+        if (isBarmanAlreadyBooked(booking.getBarman().getId(), booking.getDate())) throw new DateAlreadyBookedException("Il barman richiesto ha già una prenotazione confermata per il giorno selezionato.");
         booking.setStatus(Status.CONFIRMED);
         bookingRepository.save(booking);
         emailService.sendBookingConfirmationToUser(booking.getUser().getEmail(), booking);
@@ -76,9 +79,18 @@ public class BookingService {
         return "Prenotazione confermata";
     }
 
-    public boolean isAlreadyBooked(Long userId, LocalDateTime date) {
+    public boolean isUserAlreadyBooked(Long userId, LocalDateTime date) {
         User user = userRepository.findById(userId).get();
         List<BookingResponseProj> bookings = bookingRepository.findAllByUserId(userId);
+        for (BookingResponseProj booking : bookings) {
+            if (booking.getDate().equals(date) && booking.getStatus() == Status.CONFIRMED) return true;
+        }
+            return false;
+    }
+
+    public boolean isBarmanAlreadyBooked(Long barmanId, LocalDateTime date) {
+        User user = userRepository.findById(barmanId).get();
+        List<BookingResponseProj> bookings = bookingRepository.findAllByBarmanId(barmanId);
         for (BookingResponseProj booking : bookings) {
             if (booking.getDate().equals(date) && booking.getStatus() == Status.CONFIRMED) return true;
         }

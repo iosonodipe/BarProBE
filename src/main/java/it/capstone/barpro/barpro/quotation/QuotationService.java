@@ -2,10 +2,12 @@ package it.capstone.barpro.barpro.quotation;
 
 import it.capstone.barpro.barpro.barman.Barman;
 import it.capstone.barpro.barpro.barman.BarmanRepo;
-import it.capstone.barpro.barpro.barman.authDtos.RegisteredBarmanDTO;
 import it.capstone.barpro.barpro.booking.Booking;
 import it.capstone.barpro.barpro.booking.BookingRepo;
+import it.capstone.barpro.barpro.booking.BookingService;
 import it.capstone.barpro.barpro.email.EmailService;
+import it.capstone.barpro.barpro.errors.DateAlreadyBookedException;
+import it.capstone.barpro.barpro.errors.QuotationAlreadyClosedException;
 import it.capstone.barpro.barpro.user.UserRepository;
 import it.capstone.barpro.barpro.user.authDtos.RegisteredUserDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,7 +15,6 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class QuotationService {
     private final UserRepository userRepository;
     private final BarmanRepo barmanRepository;
     private final BookingRepo bookingRepository;
+    private final BookingService bookingService;
 
     public Page<QuotationResponseProj> findAll(int page, int size, String sortBy){
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -78,32 +80,34 @@ public class QuotationService {
          if (!userRepository.existsById(barmanId)){
             throw new EntityNotFoundException("Barman non trovato.");
         }
-         Barman barman = barmanRepository.findById(barmanId).get();
-         emailService.sendResponseEmailToUser(barman.getEmail(), barman, price);
+         if(repo.findById(quotationId).get().getStatus() != Status.CLOSED){
+            Barman barman = barmanRepository.findById(barmanId).get();
+            emailService.sendResponseEmailToUser(barman.getEmail(), barman, price);
+         } else throw new QuotationAlreadyClosedException();
     }
 
     @Transactional
     public String acceptQuotation(Long quotationId, Long barmanId) {
+        if(repo.findById(quotationId).get().getStatus() == Status.CLOSED) throw new QuotationAlreadyClosedException();
         Quotation quotation = repo.findById(quotationId).orElseThrow(() -> new EntityNotFoundException("Richiesta di quotazione non trovata."));
         Barman barman = barmanRepository.findById(barmanId).orElseThrow(() -> new EntityNotFoundException("Barman non trovato."));
-        // Creare una prenotazione
-        Booking booking = new Booking();
-        BeanUtils.copyProperties(quotation, booking, "id", "status", "requestDate"); // Copia le proprietà da Quotation a Booking
-        booking.setStatus(it.capstone.barpro.barpro.booking.Status.CONFIRMED);
-        booking.setDate(quotation.getRequestDate());
-        booking.setUser(quotation.getUser());
-        booking.setBarman(barman);
 
-        bookingRepository.save(booking);
+        if (bookingService.isUserAlreadyBooked(quotation.getUser().getId(), quotation.getRequestDate())) throw new DateAlreadyBookedException();
+        else if(bookingService.isUserAlreadyBooked(quotation.getUser().getId(), quotation.getRequestDate())) throw new DateAlreadyBookedException("Il barman richiesto ha già una prenotazione confermata per il giorno selezionato.");
+        else{
+            Booking booking = new Booking();
+            BeanUtils.copyProperties(quotation, booking, "id", "status", "requestDate"); // Copia le proprietà da Quotation a Booking
+            booking.setDate(quotation.getRequestDate());
+            booking.setStatus(it.capstone.barpro.barpro.booking.Status.PENDING);
+            booking.setUser(quotation.getUser());
+            booking.setBarman(barman);
+            bookingRepository.save(booking);
 
-        // Chiudere la quotazione
-        quotation.setStatus(Status.CLOSED);
-        repo.save(quotation);
-
-        // Inviare email di conferma
-        emailService.sendBookingConfirmationToUser(quotation.getUser().getEmail(), booking);
-        emailService.sendBookingConfirmationToBarman(barman.getEmail(), booking);
-
+            bookingService.confirmBooking(booking.getId());
+            // Chiudere la quotazione
+            quotation.setStatus(Status.CLOSED);
+            repo.save(quotation);
+        }
         return "Quotazione confermata";
     }
 

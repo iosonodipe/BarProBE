@@ -13,4 +13,5 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
     public Page<BookingResponseProj> findAllByUserId(Pageable pageable, Long id);
     public List<BookingResponseProj> findAllByUserId(Long id);
     public Page<BookingResponseProj> findAllByBarmanId(Pageable pageable, Long id);
+    public List<BookingResponseProj> findAllByBarmanId(Long id);
 }

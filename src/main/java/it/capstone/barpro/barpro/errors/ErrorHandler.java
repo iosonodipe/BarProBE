@@ -59,5 +59,11 @@ public class ErrorHandler {
         return new ResponseEntity<>(strError, HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(QuotationAlreadyClosedException.class)
+    public ResponseEntity<String> handleQuotationAlreadyClosed(QuotationAlreadyClosedException error){
+        String strError = error.getMessage();
+        return new ResponseEntity<>(strError, HttpStatus.UNAUTHORIZED);
+    }
+
 
 }
