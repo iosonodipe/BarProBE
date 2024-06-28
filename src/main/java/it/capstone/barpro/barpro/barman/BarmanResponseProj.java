@@ -7,4 +7,5 @@ public interface BarmanResponseProj {
     String getCity();
     Integer getExperienceYears();
     Integer getRating();
+    String getDescription();
 }
