@@ -18,11 +18,12 @@ public class RegisteredBarmanDTO {
     String city;
     String description;
     Integer experienceYears;
+    String avatar;
     Integer rating;
     private List<Roles> roles;
 
     @Builder(setterPrefix = "with")
-    public RegisteredBarmanDTO(Long id, String firstName, String lastName, String username, String email, String city, String description, Integer experienceYears, Integer rating, List<Roles> roles) {
+    public RegisteredBarmanDTO(Long id, String firstName, String lastName, String username, String email, String city, String description, Integer experienceYears, String avatar, Integer rating, List<Roles> roles) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,6 +32,7 @@ public class RegisteredBarmanDTO {
         this.city = city;
         this.description = description;
         this.experienceYears = experienceYears;
+        this.avatar = avatar;
         this.rating = rating;
         this.roles = roles;
     }
