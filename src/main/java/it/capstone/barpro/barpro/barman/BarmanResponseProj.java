@@ -5,6 +5,7 @@ public interface BarmanResponseProj {
     String getFirstName();
     String getLastName();
     String getCity();
+    String getAvatar();
     Integer getExperienceYears();
     Integer getRating();
     String getDescription();

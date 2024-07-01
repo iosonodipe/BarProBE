@@ -42,7 +42,7 @@ public class BarmanRunner{
                     barman.setEmail("barman" + i + "@example.com");
                     barman.setPassword(passwordEncoder.encode("password"));
                     barman.setCity(ITALIAN_CITIES.get(new Random().nextInt(ITALIAN_CITIES.size())));
-                    barman.setAvatar(generateRandomAvatarUrl());
+                    barman.setAvatar("https://picsum.photos/300");
                     barman.setExperienceYears(faker.number().numberBetween(1, 30));
                     barman.setDescription(faker.lorem().sentence(10, 20));
                     barman.setRating(faker.number().numberBetween(1, 5));
@@ -60,13 +60,4 @@ public class BarmanRunner{
         };
     }
 
-    private String generateRandomAvatarUrl() {
-        int width = 200;
-        int height = 200;
-        String randomQuery = new Random().ints(97, 123) // ASCII values for a-z
-                .limit(10)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
-        return "https://source.unsplash.com/random/" + width + "x" + height + "?sig=" + randomQuery;
-    }
 }
