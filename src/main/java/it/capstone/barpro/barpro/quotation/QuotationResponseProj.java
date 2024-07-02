@@ -15,4 +15,5 @@ public interface QuotationResponseProj {
     String getEventDetails();
     String getCity();
     LocalDateTime getRequestDate();
+    String getStatus();
 }

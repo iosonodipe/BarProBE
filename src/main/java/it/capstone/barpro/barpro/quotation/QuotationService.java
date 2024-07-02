@@ -8,6 +8,7 @@ import it.capstone.barpro.barpro.booking.BookingService;
 import it.capstone.barpro.barpro.email.EmailService;
 import it.capstone.barpro.barpro.errors.DateAlreadyBookedException;
 import it.capstone.barpro.barpro.errors.QuotationAlreadyClosedException;
+import it.capstone.barpro.barpro.user.User;
 import it.capstone.barpro.barpro.user.UserRepository;
 import it.capstone.barpro.barpro.user.authDtos.RegisteredUserDTO;
 import jakarta.persistence.EntityNotFoundException;
@@ -90,7 +91,9 @@ public class QuotationService {
         }
          if(repo.findById(quotationId).get().getStatus() != Status.CLOSED){
             Barman barman = barmanRepository.findById(barmanId).get();
-            emailService.sendResponseEmailToUser(barman.getEmail(), barman, price);
+             Long userId = repo.findById(quotationId).get().getUser().getId();
+             User user = userRepository.findById(userId).get();
+            emailService.sendResponseEmailToUser(user.getEmail(), barman, price);
          } else throw new QuotationAlreadyClosedException();
     }
 

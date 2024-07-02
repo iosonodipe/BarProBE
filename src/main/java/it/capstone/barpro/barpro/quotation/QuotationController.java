@@ -27,7 +27,7 @@ public class QuotationController {
     }
 
     @GetMapping("/byUser/{id}")
-    public ResponseEntity<Page<QuotationResponseProj>> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, @PathVariable Long id){
+    public ResponseEntity<Page<QuotationResponseProj>> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "requestDate") String sortBy, @PathVariable Long id){
         return ResponseEntity.ok(svc.findAllByUser(page, size, sortBy, id));
     }
 

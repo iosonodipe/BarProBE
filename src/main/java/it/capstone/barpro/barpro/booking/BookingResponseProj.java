@@ -6,6 +6,7 @@ import it.capstone.barpro.barpro.user.User;
 import java.time.LocalDateTime;
 
 public interface BookingResponseProj {
+    Long getId();
     User getUser();
     Barman getBarman();
     String getEventDetails();
