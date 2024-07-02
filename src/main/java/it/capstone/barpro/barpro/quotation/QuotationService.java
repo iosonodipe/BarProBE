@@ -22,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 
 @Service
 @Validated
@@ -44,6 +46,12 @@ public class QuotationService {
         Pageable pageable = PageRequest.of(page, size, Sort.unsorted());
         return repo.findAllByCity(pageable, city);
     }
+
+    public Page<QuotationResponseProj> findAllByUser(int page, int size, String sortBy, Long id){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return repo.findAllByUserId(pageable, id);
+    }
+
 
     public Response findById(Long id){
         if (!repo.existsById(id)){

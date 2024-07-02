@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 public interface QuotationResponseProj {
 
     Long getId();
-    @Value("#{target.user.name}")
+    @Value("#{target.user.firstName}")
     String getNameUser();
-    @Value("#{target.user.surname}")
+    @Value("#{target.user.lastName}")
     String getSurnameUser();
     String getEventDetails();
     String getCity();

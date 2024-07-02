@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/quotations")
 public class QuotationController {
@@ -22,6 +24,11 @@ public class QuotationController {
     @GetMapping("/byCity")
     public ResponseEntity<Page<QuotationResponseProj>> findAllByCity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String city){
         return ResponseEntity.ok(svc.findAllByCity(page, size, city));
+    }
+
+    @GetMapping("/byUser/{id}")
+    public ResponseEntity<Page<QuotationResponseProj>> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "id") String sortBy, @PathVariable Long id){
+        return ResponseEntity.ok(svc.findAllByUser(page, size, sortBy, id));
     }
 
     @PostMapping
