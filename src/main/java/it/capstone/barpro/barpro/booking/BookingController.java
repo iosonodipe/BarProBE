@@ -2,6 +2,7 @@ package it.capstone.barpro.barpro.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +46,7 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.createBooking(request));
     }
 
-    @PatchMapping("/{id}/confirm")
+    @PatchMapping(value = "/{id}/confirm", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> confirmBooking(@PathVariable Long id) {
         return ResponseEntity.ok(bookingService.confirmBooking(id));
     }

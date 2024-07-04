@@ -20,6 +20,7 @@ public class CorsConfig {
         configuration.addAllowedMethod("GET");
         configuration.addAllowedMethod("POST");
         configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("PATCH");
         configuration.addAllowedMethod("DELETE");
         configuration.addAllowedMethod("OPTIONS");
 

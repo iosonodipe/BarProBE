@@ -24,7 +24,7 @@ public class EmailService {
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Benvenuto nella nostra applicazione!");
+            helper.setSubject("Benvenuto su BarPRO!");
             helper.setText("Grazie per esserti registrato. Benvenuto!");
 
             emailSender.send(message);
@@ -39,7 +39,7 @@ public class EmailService {
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Richiesta di prenotazione");
+            helper.setSubject("BarPRO - Richiesta di prenotazione");
 
             // Costruisci il contenuto dell'email come una singola stringa
             StringBuilder emailContent = new StringBuilder();
@@ -49,7 +49,7 @@ public class EmailService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
             emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
-            emailContent.append("Clicca il link per confermare l'appuntamento: " + "http://localhost:8080/api/bookings/confirm/" + booking.getId() + "\n");
+            emailContent.append("Clicca il link per confermare l'appuntamento: " + "http://localhost:4200/confirm-booking/" + booking.getId() + "\n");
 
             // Imposta il contenuto dell'email
             helper.setText(emailContent.toString());
@@ -66,7 +66,7 @@ public class EmailService {
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Prenotazione confermata");
+            helper.setSubject("BarPRO - Prenotazione confermata");
 
             // Costruisci il contenuto dell'email come una singola stringa
             StringBuilder emailContent = new StringBuilder();
@@ -76,7 +76,7 @@ public class EmailService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
             emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
-            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:8080/api/bookings/user/" + booking.getUser().getId() + "\n");
+            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-bookings");
 
             // Imposta il contenuto dell'email
             helper.setText(emailContent.toString());
@@ -93,7 +93,7 @@ public class EmailService {
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Prenotazione confermata");
+            helper.setSubject("BarPRO - Prenotazione confermata");
 
             // Costruisci il contenuto dell'email come una singola stringa
             StringBuilder emailContent = new StringBuilder();
@@ -103,7 +103,7 @@ public class EmailService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
             emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
-            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:8080/api/bookings/barman/" + booking.getBarman().getId() + "\n");
+            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-events");
 
             // Imposta il contenuto dell'email
             helper.setText(emailContent.toString());
@@ -114,13 +114,13 @@ public class EmailService {
         }
     }
 
-    public void sendResponseEmailToUser(String recipientEmail, Barman barman, Double priceDetails) {
+    public void sendResponseEmailToUser(String recipientEmail, Barman barman, Long quotationId, Double priceDetails) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
             helper.setTo(recipientEmail);
-            helper.setSubject("Risposta alla tua richiesta di quotazione");
+            helper.setSubject("BarPRO - Risposta alla tua richiesta di quotazione");
 
             // Build email content
             StringBuilder emailContent = new StringBuilder();
@@ -132,6 +132,8 @@ public class EmailService {
             emailContent.append(String.format("Prezzo: %s\n", priceDetails));
             emailContent.append("\nClicca il link per visualizzare il profilo del barman: ");
             emailContent.append(String.format("http://localhost:8080/api/barmen/%d\n", barman.getId()));
+            emailContent.append("\nClicca il link per confermare la quotazione: ");
+            emailContent.append(String.format("http://localhost:4200/accept-quotation/%d/%d\n", quotationId, barman.getId()));
 
             // Set the email content
             helper.setText(emailContent.toString());

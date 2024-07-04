@@ -93,7 +93,7 @@ public class QuotationService {
             Barman barman = barmanRepository.findById(barmanId).get();
              Long userId = repo.findById(quotationId).get().getUser().getId();
              User user = userRepository.findById(userId).get();
-            emailService.sendResponseEmailToUser(user.getEmail(), barman, price);
+            emailService.sendResponseEmailToUser(user.getEmail(), barman, quotationId, price);
          } else throw new QuotationAlreadyClosedException();
     }
 
@@ -116,8 +116,7 @@ public class QuotationService {
 
             bookingService.confirmBooking(booking.getId());
             // Chiudere la quotazione
-            quotation.setStatus(Status.CLOSED);
-            repo.save(quotation);
+            repo.deleteById(quotationId);
         }
         return "Quotazione confermata";
     }
