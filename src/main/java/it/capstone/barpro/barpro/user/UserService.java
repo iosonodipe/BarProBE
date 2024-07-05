@@ -242,12 +242,21 @@ public class UserService {
         return url;
     }
 
-    private void deleteAvatar(String url) throws IOException {
-        if (url != null && !url.isEmpty()) {
-            String publicId = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
+    public void deleteAvatar(String url) throws IOException {
+        int lastSlashIndex = url.lastIndexOf('/');
+        int lastDotIndex = url.lastIndexOf('.');
+        System.out.println("lastSlah" + lastSlashIndex + "lastDot" + lastDotIndex );
+        System.out.println(url);
+
+        if (lastSlashIndex != -1 && lastDotIndex != -1 && lastSlashIndex < lastDotIndex) {
+            String publicId = url.substring(lastSlashIndex + 1, lastDotIndex);
             cloudinary.uploader().destroy(publicId, com.cloudinary.utils.ObjectUtils.emptyMap());
+        } else {
+            // Gestisci il caso in cui gli indici non sono validi
+            System.out.println("Indici non validi per la URL: " + url);
         }
     }
+
 
     public long getMaxFileSizeInBytes() {
         String[] parts = maxFileSize.split("(?i)(?<=[0-9])(?=[a-z])");

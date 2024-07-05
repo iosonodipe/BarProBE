@@ -102,7 +102,14 @@ public class BarmanService {
             throw new EntityNotFoundException("Barman non trovato.");
         }
         Barman barman = repo.findById(id).get();
+        String password = barman.getPassword();
+        String avatar = barman.getAvatar();
         BeanUtils.copyProperties(request, barman);
+        barman.setAvatar(avatar);
+        if (request.password().equals("0")) {
+            System.out.println(password);
+            barman.setPassword(password);
+        } else barman.setPassword(encoder.encode(request.password()));
         repo.save(barman);
 
         RegisteredBarmanDTO response = new RegisteredBarmanDTO();

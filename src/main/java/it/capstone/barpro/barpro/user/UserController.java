@@ -83,7 +83,7 @@ public class UserController {
     }
 
     @PostMapping("/{username}/avatar")
-    public ResponseEntity<String> uploadAvatar(@PathVariable String username, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadAvatar(@PathVariable String username, @RequestPart("file") MultipartFile file) {
         try {
             // Carica l'immagine su Cloudinary
             var uploadResult = cloudinary.uploader().upload(file.getBytes(),
