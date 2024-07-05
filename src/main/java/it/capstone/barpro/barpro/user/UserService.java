@@ -231,7 +231,7 @@ public class UserService {
         User user = usersRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // Elimina l'avatar esistente (se presente)
-        deleteAvatar(user.getAvatar());
+//        deleteAvatar(user.getAvatar());
 
         // Carica la nuova immagine su Cloudinary
         var uploadResult = cloudinary.uploader().upload(updatedImage.getBytes(),

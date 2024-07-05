@@ -58,18 +58,31 @@ public class ApplicationSecurityConfig {
                 .cors(Customizer.withDefaults()) // Utilizza la configurazione CORS
                 .authorizeHttpRequests(authorize ->
                                 authorize //CONFIGURAZIONE DELLA PROTEZIONE DEI VARI ENDPOINT
-                                        .requestMatchers(HttpMethod.POST, "/api/users/registerAdmin").permitAll() // DA CANCELLARE DOPO AVER CREATO L'ADMIN
+                                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.GET, "/api/users/{username}/avatar").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
-
-                                        .requestMatchers("/api/barmen").permitAll()
+                                        .requestMatchers(HttpMethod.PUT, "/api/users/{username}/avatar").authenticated()
                                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}").authenticated() //SOLO UN UTENTE AUTENTICATO PUO MODIFICARE I SUOI DATI
 
-                                        .requestMatchers(HttpMethod.POST, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE POST POSSONO ESSERE FATTE SOLO DALL'ADMIN
-                                        .requestMatchers(HttpMethod.DELETE, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
-                                        .requestMatchers(HttpMethod.GET, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
-                                        .requestMatchers(HttpMethod.PUT, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
-                                        .requestMatchers(HttpMethod.PATCH, "/**").permitAll()//.hasAuthority("ADMIN") //TUTTE LE DELETE POSSONO ESSERE FATTE SOLO DALL'ADMIN
+                                        .requestMatchers(HttpMethod.GET, "/api/barmen").permitAll()
+                                        .requestMatchers(HttpMethod.PUT, "/api/barmen/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.PUT, "/api/barmen/{username}/avatar").authenticated()
+
+                                        .requestMatchers(HttpMethod.GET, "/api/bookings/user/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/bookings").authenticated()
+                                        .requestMatchers(HttpMethod.PUT, "/api/bookings/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.PATCH, "/api/bookings/{id}/confirm").authenticated()
+                                        .requestMatchers(HttpMethod.DELETE, "/api/bookings/{id}").authenticated()
+
+                                        .requestMatchers(HttpMethod.GET, "/api/quotations/byUser/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.GET, "/api/quotations").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/quotations").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/respond").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/accept").authenticated()
+                                        .requestMatchers(HttpMethod.PUT, "/api/quotations/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.DELETE, "/api/quotations/{id}").authenticated()
+
                         //.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)
                 )
                 .httpBasic(Customizer.withDefaults())
