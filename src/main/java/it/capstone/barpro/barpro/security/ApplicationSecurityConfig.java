@@ -66,10 +66,15 @@ public class ApplicationSecurityConfig {
                                         .requestMatchers(HttpMethod.PUT, "/api/users/{id}").authenticated() //SOLO UN UTENTE AUTENTICATO PUO MODIFICARE I SUOI DATI
 
                                         .requestMatchers(HttpMethod.GET, "/api/barmen").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/barmen/{id}").permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/barmen/{username}/avatar").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/api/barmen/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/barmen").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/api/barmen/{username}/avatar").authenticated()
 
                                         .requestMatchers(HttpMethod.GET, "/api/bookings/user/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.GET, "/api/bookings/barman/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.GET, "/api/bookings").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/bookings").authenticated()
                                         .requestMatchers(HttpMethod.PUT, "/api/bookings/{id}").authenticated()
                                         .requestMatchers(HttpMethod.PATCH, "/api/bookings/{id}/confirm").authenticated()
