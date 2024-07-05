@@ -184,8 +184,13 @@ public class UserService {
             throw new EntityNotFoundException("Utente non trovato.");
         }
         User user = usersRepository.findById(id).get();
+        String password = user.getPassword();
+        String avatar = user.getAvatar();
         BeanUtils.copyProperties(RegisterUserModel, user);
-        user.setPassword(encoder.encode(RegisterUserModel.password()));
+        user.setAvatar(avatar);
+        if (RegisterUserModel.password().equals("0")) {
+            user.setPassword(password);
+        } else user.setPassword(encoder.encode(RegisterUserModel.password()));
         usersRepository.save(user);
 
         RegisteredUserDTO RegisteredUserDTO = new RegisteredUserDTO();
@@ -245,8 +250,6 @@ public class UserService {
     public void deleteAvatar(String url) throws IOException {
         int lastSlashIndex = url.lastIndexOf('/');
         int lastDotIndex = url.lastIndexOf('.');
-        System.out.println("lastSlah" + lastSlashIndex + "lastDot" + lastDotIndex );
-        System.out.println(url);
 
         if (lastSlashIndex != -1 && lastDotIndex != -1 && lastSlashIndex < lastDotIndex) {
             String publicId = url.substring(lastSlashIndex + 1, lastDotIndex);

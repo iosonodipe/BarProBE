@@ -107,7 +107,6 @@ public class BarmanService {
         BeanUtils.copyProperties(request, barman);
         barman.setAvatar(avatar);
         if (request.password().equals("0")) {
-            System.out.println(password);
             barman.setPassword(password);
         } else barman.setPassword(encoder.encode(request.password()));
         repo.save(barman);
