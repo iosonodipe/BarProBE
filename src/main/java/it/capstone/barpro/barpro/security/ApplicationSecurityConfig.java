@@ -59,6 +59,7 @@ public class ApplicationSecurityConfig {
                 .authorizeHttpRequests(authorize ->
                                 authorize //CONFIGURAZIONE DELLA PROTEZIONE DEI VARI ENDPOINT
                                         .requestMatchers(HttpMethod.GET, "/api/users/{id}").authenticated()
+                                        .requestMatchers(HttpMethod.DELETE, "/api/users/{id}").permitAll()
                                         .requestMatchers(HttpMethod.GET, "/api/users/{username}/avatar").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
@@ -77,14 +78,14 @@ public class ApplicationSecurityConfig {
                                         .requestMatchers(HttpMethod.GET, "/api/bookings").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/bookings").authenticated()
                                         .requestMatchers(HttpMethod.PUT, "/api/bookings/{id}").authenticated()
-                                        .requestMatchers(HttpMethod.PATCH, "/api/bookings/{id}/confirm").authenticated()
+                                        .requestMatchers(HttpMethod.PATCH, "/api/bookings/{id}/confirm").permitAll()
                                         .requestMatchers(HttpMethod.DELETE, "/api/bookings/{id}").authenticated()
 
                                         .requestMatchers(HttpMethod.GET, "/api/quotations/byUser/{id}").authenticated()
                                         .requestMatchers(HttpMethod.GET, "/api/quotations").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/quotations").authenticated()
                                         .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/respond").authenticated()
-                                        .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/accept").authenticated()
+                                        .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/accept").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/api/quotations/{id}").authenticated()
                                         .requestMatchers(HttpMethod.DELETE, "/api/quotations/{id}").authenticated()
 

@@ -74,8 +74,8 @@ public class BookingService {
         if (isBarmanAlreadyBooked(booking.getBarman().getId(), booking.getDate())) throw new DateAlreadyBookedException("Il barman richiesto ha già una prenotazione confermata per il giorno selezionato.");
         booking.setStatus(Status.CONFIRMED);
         bookingRepository.save(booking);
-        emailService.sendBookingConfirmationToUser(booking.getUser().getEmail(), booking);
-        emailService.sendBookingConfirmationToBarman(booking.getBarman().getEmail(), booking);
+        emailService.sendBookingConfirmationToUser(booking.getUser().getEmail(), booking, "crea");
+        emailService.sendBookingConfirmationToBarman(booking.getBarman().getEmail(), booking, "crea");
         return "Prenotazione confermata";
     }
 
@@ -149,6 +149,10 @@ public class BookingService {
         booking.setBarman(barmanRepository.findById(request.getIdBarman()).get());
         bookingRepository.save(booking);
 
+        emailService.sendBookingConfirmationToUser(booking.getUser().getEmail(), booking, "modifica");
+        emailService.sendBookingConfirmationToBarman(booking.getBarman().getEmail(), booking, "modifica");
+
+
         Response response = new Response();
         BeanUtils.copyProperties(booking, response);
 
@@ -167,7 +171,13 @@ public class BookingService {
         if (!bookingRepository.existsById(id)) {
             throw new IllegalArgumentException("Prenotazione non trovata.");
         }
+        Booking booking = bookingRepository.findById(id).get();
+
+        emailService.sendBookingConfirmationToUser(booking.getUser().getEmail(), booking, "elimina");
+        emailService.sendBookingConfirmationToBarman(booking.getBarman().getEmail(), booking, "elimina");
+
         bookingRepository.deleteById(id);
+
         return "Prenotazione eliminata.";
     }
 }

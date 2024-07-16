@@ -60,26 +60,60 @@ public class EmailService {
         }
     }
 
-    public void sendBookingConfirmationToUser(String recipientEmail, Booking booking) {
+    public void sendBookingConfirmationToUser(String recipientEmail, Booking booking, String azione) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            helper.setTo(recipientEmail);
-            helper.setSubject("BarPRO - Prenotazione confermata");
+            if (azione.equals("crea")) {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Prenotazione confermata");
 
-            // Costruisci il contenuto dell'email come una singola stringa
-            StringBuilder emailContent = new StringBuilder();
-            emailContent.append("La tua richiesta di prenotazione è stata confermata, di seguito i dettagli:\n\n");
-            emailContent.append(String.format("Barman: %s %s %s\n", booking.getBarman().getFirstName(), booking.getBarman().getLastName(), booking.getBarman().getEmail()));
-            emailContent.append(String.format("Città: %s\n", booking.getCity()));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
-            emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
-            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-bookings");
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("La tua richiesta di prenotazione è stata confermata, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Barman: %s %s %s\n", booking.getBarman().getFirstName(), booking.getBarman().getLastName(), booking.getBarman().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-bookings");
 
-            // Imposta il contenuto dell'email
-            helper.setText(emailContent.toString());
+                // Imposta il contenuto dell'email
+                helper.setText(emailContent.toString());
+            } else if (azione.equals("modifica")) {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Prenotazione modificata");
+
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("La tua richiesta di prenotazione è stata modificata, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Barman: %s %s %s\n", booking.getBarman().getFirstName(), booking.getBarman().getLastName(), booking.getBarman().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-bookings");
+
+                // Imposta il contenuto dell'email
+                helper.setText(emailContent.toString());
+            } else {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Prenotazione eliminata");
+
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("La tua richiesta di prenotazione è stata eliminata, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Barman: %s %s %s\n", booking.getBarman().getFirstName(), booking.getBarman().getLastName(), booking.getBarman().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-bookings");
+
+                // Imposta il contenuto dell'email
+                helper.setText(emailContent.toString());
+            }
 
             emailSender.send(message);
         } catch (MessagingException e) {
@@ -87,26 +121,57 @@ public class EmailService {
         }
     }
 
-    public void sendBookingConfirmationToBarman(String recipientEmail, Booking booking) {
+    public void sendBookingConfirmationToBarman(String recipientEmail, Booking booking, String azione) {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
 
         try {
-            helper.setTo(recipientEmail);
-            helper.setSubject("BarPRO - Prenotazione confermata");
+            if (azione.equals("crea")) {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Prenotazione confermata");
 
-            // Costruisci il contenuto dell'email come una singola stringa
-            StringBuilder emailContent = new StringBuilder();
-            emailContent.append("Hai confermato una prenotazione, di seguito i dettagli:\n\n");
-            emailContent.append(String.format("Cliente: %s %s %s\n", booking.getUser().getFirstName(), booking.getUser().getLastName(), booking.getUser().getEmail()));
-            emailContent.append(String.format("Città: %s\n", booking.getCity()));
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-            emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
-            emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
-            emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-events");
-
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("Hai confermato una prenotazione, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Cliente: %s %s %s\n", booking.getUser().getFirstName(), booking.getUser().getLastName(), booking.getUser().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-events");
             // Imposta il contenuto dell'email
             helper.setText(emailContent.toString());
+            } else if (azione.equals("modifica")) {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Richiesta di prenotazione modificata");
+
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("La prenotazione che hai ricevuto è stata modificata, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Cliente: %s %s %s\n", booking.getUser().getFirstName(), booking.getUser().getLastName(), booking.getUser().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-events");
+                // Imposta il contenuto dell'email
+                helper.setText(emailContent.toString());
+            } else {
+                helper.setTo(recipientEmail);
+                helper.setSubject("BarPRO - Prenotazione eliminata");
+
+                // Costruisci il contenuto dell'email come una singola stringa
+                StringBuilder emailContent = new StringBuilder();
+                emailContent.append("La prenotazione che hai ricevuto è stata eliminata, di seguito i dettagli:\n\n");
+                emailContent.append(String.format("Cliente: %s %s %s\n", booking.getUser().getFirstName(), booking.getUser().getLastName(), booking.getUser().getEmail()));
+                emailContent.append(String.format("Città: %s\n", booking.getCity()));
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+                emailContent.append(String.format("Data: %s\n", booking.getDate().format(formatter)));
+                emailContent.append(String.format("Dettagli: %s\n", booking.getEventDetails()));
+                emailContent.append("Clicca il link per visualizzare le tue prenotazioni: " + "http://localhost:4200/my-events");
+                // Imposta il contenuto dell'email
+                helper.setText(emailContent.toString());
+            }
 
             emailSender.send(message);
         } catch (MessagingException e) {
@@ -130,8 +195,6 @@ public class EmailService {
             emailContent.append(String.format("Descrizione: %s\n", barman.getDescription()));
             emailContent.append(String.format("Valutazione: %d\n", barman.getRating()));
             emailContent.append(String.format("Prezzo: %s\n", priceDetails));
-            emailContent.append("\nClicca il link per visualizzare il profilo del barman: ");
-            emailContent.append(String.format("http://localhost:8080/api/barmen/%d\n", barman.getId()));
             emailContent.append("\nClicca il link per confermare la quotazione: ");
             emailContent.append(String.format("http://localhost:4200/accept-quotation/%d/%d\n", quotationId, barman.getId()));
 
