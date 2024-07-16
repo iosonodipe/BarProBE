@@ -88,8 +88,7 @@ public class ApplicationSecurityConfig {
                                         .requestMatchers(HttpMethod.POST, "/api/quotations/{id}/accept").permitAll()
                                         .requestMatchers(HttpMethod.PUT, "/api/quotations/{id}").authenticated()
                                         .requestMatchers(HttpMethod.DELETE, "/api/quotations/{id}").authenticated()
-
-                        //.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)
+                                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()                        //.requestMatchers("/**").authenticated() //TUTTO CIO CHE PUO ESSERE SFUGGITO RICHIEDE L'AUTENTICAZIONE (SERVE A GESTIRE EVENTUALI DIMENTICANZE)
                 )
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
